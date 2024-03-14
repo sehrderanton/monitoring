@@ -13,7 +13,7 @@ $ docker-compose up
 ## Services and Ports
 
 ### Grafana
-- URL: http://localhost:3000 
+- URL: http://localhost:4000 
 - User: admin 
 - Password: admin 
 
@@ -47,29 +47,3 @@ InfluxDB shell version: 1.8.0
 
 ```bash
 $ docker-compose exec -w /imports influxdb influx -import -path=data.txt -precision=s
-```
-
-## Run the PHP Example
-
-The PHP example generates random example metrics. The random metrics are beeing sent via UDP to the telegraf agent using the StatsD protocol.
-
-The telegraf agents aggregates the incoming data and perodically persists the data into the InfluxDB database.
-
-Grafana connects to the InfluxDB database and is able to visualize the incoming data.
-
-```bash
-$ cd php-example
-$ composer install
-$ php example.php
-Sending Random metrics. Use Ctrl+C to stop.
-..........................^C
-Runtime:	0.88382697105408 Seconds
-Ops:		27 
-Ops/s:		30.548965899738 
-Killed by Ctrl+C
-```
-
-## License
-
-The MIT License (MIT). Please see [License File](LICENSE) for more information.
-
