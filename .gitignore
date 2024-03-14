@@ -1,7 +1,6 @@
 .idea/
 docker/data/inluxdb_data/
 docker/data/grafana_data/
-docker/mongodb/data/
-docker/elastic/data/
-docker/postgres/data/
+docker/data/mongodb/
+docker/data/elastic/
 log/

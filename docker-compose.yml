@@ -9,6 +9,9 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - influxdb
+      - mongo
+      - elastic
+      - nginx
     links:
       - influxdb
     ports:
@@ -57,7 +60,63 @@ services:
     networks:
       - backend
 
+  mongo:
+    image: mongo
+    restart: always
+    volumes:
+      - ./docker/data/mongodb:/data/db
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    networks:
+      - backend
+
+  elastic:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.6
+    environment:
+      - node.name=elastic
+      - cluster.name=es-docker-cluster
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms750m -Xmx750m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./docker/data/elastic:/usr/share/elasticsearch/data
+#      - ./docker/config/elastic:/config
+    ports:
+      - 9200:9200
+    networks:
+      - backend
+
+#  php-pure-nginx:
+#    build:
+#      context: docker/php/nginx
+#    volumes:
+#      - ./php-pure:/app
+#      - php-xhprof:/var/xhprof/xhprof-2.3.9
+#    ports:
+#      - "8181:8181"
+#      - "8281:8281"
+#      - "8282:8282"
+#    networks:
+#      - backend
+#
+#  php-pure-fpm:
+#    build:
+#      context: docker/php/php-fpm
+#    volumes:
+#      - ./php-pure:/app
+#      - php-xhprof:/var/xhprof/xhprof-2.3.9
+#    networks:
+#      - backend
+#
 #volumes:
+#  php-xhprof:
 #  grafana_data: {}
 #  influxdb_data: {}
 

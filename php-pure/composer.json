@@ -1,0 +1,15 @@
+{
+  "name": "antondon/php-pure",
+  "description": "description",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "antondon",
+      "email": "anton.don.mail@gmail.com"
+    }
+  ],
+  "require": {
+    "ext-xhprof": "2.3.9"
+  }
+}
