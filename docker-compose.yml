@@ -1,15 +1,20 @@
 version: '3.6'
 services:
   telegraf:
-    image: telegraf:1.18-alpine
+    image: telegraf:1.29
+    platform: linux/x86_64
+    user: root:1000
     volumes:
-    - ./telegraf/etc/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - ./telegraf/etc/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - influxdb
     links:
       - influxdb
     ports:
-    - '127.0.0.1:8125:8125/udp'
+      - '127.0.0.1:8125:8125/udp'
+    networks:
+      - backend
 
   influxdb:
     image: influxdb:1.8-alpine
@@ -18,7 +23,9 @@ services:
       - '127.0.0.1:8086:8086'
     volumes:
       - ./:/imports
-      - influxdb_data:/var/lib/influxdb
+      - ./docker/data/inluxdb_data:/var/lib/influxdb
+    networks:
+      - backend
 
   grafana:
     image: grafana/grafana:8.0.2
@@ -28,12 +35,35 @@ services:
     links:
       - influxdb
     ports:
-      - '127.0.0.1:3000:3000'
+      - '127.0.0.1:4000:3000'
     volumes:
-      - grafana_data:/var/lib/grafana
+      - ./docker/data/grafana_data:/var/lib/grafana
       - ./grafana/provisioning/:/etc/grafana/provisioning/
       - ./grafana/dashboards/:/var/lib/grafana/dashboards/
+    networks:
+      - backend
 
-volumes:
-  grafana_data: {}
-  influxdb_data: {}
+  nginx:
+    image: nginx
+#    build:
+#      context: docker/config/nginx
+    volumes:
+      - ./docker/config/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+      - ./static:/app
+      - ./log/nginx:/var/log/nginx
+    working_dir: /etc/nginx/conf.d/
+    ports:
+      - "8180:8180"
+    networks:
+      - backend
+
+#volumes:
+#  grafana_data: {}
+#  influxdb_data: {}
+
+networks:
+  backend:
+#    external: true
+#    driver: bridge
+#    driver_opts:
+#      com.docker.network.driver.mtu: 1200

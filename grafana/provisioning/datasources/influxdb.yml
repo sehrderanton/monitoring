@@ -26,8 +26,8 @@ datasources:
   # <string> database name, if used
   database: "influx"
   # <bool> enable/disable basic auth
-  basicAuth: false
-#  withCredentials:
+  basicAuth: true
+  withCredentials: true
   # <bool> mark as default datasource. Max one per org
   isDefault: true
   # <map> fields that will be converted to json and stored in json_data
